@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white shadow rounded px-3 pt-3 pb-5 border border-white">
     <div class="flex justify-between">
-      <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{task.title}}</p>
+      <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm text-left">{{task.title}}</p>
 
       <img
         class="w-6 h-6 rounded-full ml-3"
@@ -33,10 +33,10 @@ export default defineComponent({
     badgeColor() {
       const mappings = {
         Design: "purple",
-        "Feature Request": "teal",
+        "Feature Request": "yellow",
         Backend: "blue",
         QA: "green",
-        default: "teal"
+        default: "red"
       };
       return mappings[this.task.type] || mappings.default;
     }
