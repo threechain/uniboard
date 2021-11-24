@@ -53,6 +53,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "board"
+version = "0.0.1"
+dependencies = [
+ "chrono",
+ "derive_more",
+ "hdk",
+ "holo_hash",
+ "serde",
+]
+
+[[package]]
 name = "byteorder"
 version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
