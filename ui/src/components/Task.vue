@@ -22,11 +22,24 @@
       <input v-model="columnTitle" type='text' name="column" placeholder="input your column title" />
       <br />
       <button v-on:click="createColumn">
-        Create a new board
+        Create a new column
       </button>
 
       <br />
       <span v-if="columnHash">Created a new column for board, hash {{ columnHash }}</span>
+    </div>
+
+    <br />
+    <h2>Create a new task for the column</h2>
+    <div>
+      <input v-model="taskDescription" type='text' name="task" placeholder="input your task description" />
+      <br />
+      <button v-on:click="createTask">
+        Create a new task
+      </button>
+
+      <br />
+      <span v-if="taskHash">Created a new task for column, hash {{ taskHash }}</span>
     </div>
 
   </div>
@@ -44,14 +57,18 @@ export default defineComponent({
   data(): {
     boardHash: String | undefined,
     columnHash: String | undefined,
+    taskHash: String | undefined,
     boardName: String,
-    columnTitle: String
+    columnTitle: String,
+    taskDescription: String,
   } {
     return {
       boardHash: undefined,
       columnHash: undefined,
+      taskHash: undefined,
       boardName: "", // TODO check empty
-      columnTitle: ""
+      columnTitle: "",
+      taskDescription: "",
     };
   },
   methods: {
@@ -86,6 +103,26 @@ export default defineComponent({
             title: this.columnTitle
           },
           board: this.boardHash
+        },
+        provenance: cell_id[1],
+      });
+    },
+    async createTask() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      this.taskHash = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: 'board',
+        fn_name: 'create_task',
+        payload: {
+          task: {
+            description: this.taskDescription
+          },
+          board: this.boardHash,
+          column: this.columnHash,
         },
         provenance: cell_id[1],
       });
