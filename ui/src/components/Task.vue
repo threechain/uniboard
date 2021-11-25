@@ -50,6 +50,12 @@
 
       <br />
       
+      <button v-on:click="getBoard">
+        Get the board
+      </button>
+
+      <br />
+      <span v-if="taskHash">{{ boardInfo }}</span>
     </div>
 
   </div>
@@ -71,6 +77,7 @@ export default defineComponent({
     boardName: String,
     columnTitle: String,
     taskDescription: String,
+    boardInfo: String,
   } {
     return {
       boardHash: undefined,
@@ -79,6 +86,7 @@ export default defineComponent({
       boardName: "", // TODO check empty
       columnTitle: "",
       taskDescription: "",
+      boardInfo: "",
     };
   },
   methods: {
@@ -138,6 +146,19 @@ export default defineComponent({
       });
     },
     async getBoard() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      const board = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: 'board',
+        fn_name: 'get_board',
+        payload: this.boardHash,
+        provenance: cell_id[1],
+      });
+      this.boardInfo = JSON.stringify(board);
     }
   },
 });
