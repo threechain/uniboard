@@ -23,6 +23,20 @@ entry_defs![
     Task::entry_def()
 ];
 
+#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
+pub struct CreateColumnInput {
+    column: Column,
+    board: EntryHashB64,
+}
+
+#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
+pub struct CreateTaskInput {
+    task: Task,
+    board: EntryHashB64,
+    column: EntryHashB64,
+}
+
+#[hdk_extern]
 pub fn create_board(board: Board) -> ExternResult<EntryHashB64> {
     create_entry(&board)?;
     let hash = hash_entry(&board)?;
@@ -30,7 +44,9 @@ pub fn create_board(board: Board) -> ExternResult<EntryHashB64> {
     Ok(EntryHashB64::from(hash))
 }
 
-pub fn create_column(column: Column, board: EntryHashB64) -> ExternResult<EntryHashB64> {
+#[hdk_extern]
+pub fn create_column(input: CreateColumnInput) -> ExternResult<EntryHashB64> {
+    let CreateColumnInput { column, board } = input;
     create_entry(&column)?;
     let column_entry_hash = hash_entry(&column)?;
 
@@ -40,7 +56,9 @@ pub fn create_column(column: Column, board: EntryHashB64) -> ExternResult<EntryH
     Ok(EntryHashB64::from(column_entry_hash))
 }
 
-pub fn create_task(task: Task, board: EntryHashB64, column: EntryHashB64) -> ExternResult<EntryHashB64> {
+#[hdk_extern]
+pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
+    let CreateTaskInput { task, board, column } = input;
     create_entry(&task)?;
     let task_entry_hash = hash_entry(&task)?;
 
