@@ -2,9 +2,11 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
 
-     <!-- kanban board info -->
+    <br />
+    <!-- kanban board info -->
+    <h2>Create Kanban Board</h2>
     <div>
-      <input type='text' name="board" placeholder="input your board name" />
+      <input v-model="boardName" type='text' name="board" placeholder="input your board name" />
       <br />
       <button v-on:click="createBoard">
         Create a new board
@@ -12,7 +14,19 @@
 
       <br />
       <span v-if="boardHash">Created a new kanban board, hash {{ boardHash }}</span>
-      <span v-else>Creating kanban board...</span>
+    </div>
+
+    <br />
+    <h2>Create a new column for the board</h2>
+    <div>
+      <input v-model="columnTitle" type='text' name="column" placeholder="input your column title" />
+      <br />
+      <button v-on:click="createColumn">
+        Create a new board
+      </button>
+
+      <br />
+      <span v-if="columnHash">Created a new column for board, hash {{ columnHash }}</span>
     </div>
 
   </div>
@@ -27,9 +41,17 @@ export default defineComponent({
   props: {
     msg: String,
   },
-  data(): { boardHash: String | undefined } {
+  data(): {
+    boardHash: String | undefined,
+    columnHash: String | undefined,
+    boardName: String,
+    columnTitle: String
+  } {
     return {
       boardHash: undefined,
+      columnHash: undefined,
+      boardName: "", // TODO check empty
+      columnTitle: ""
     };
   },
   methods: {
@@ -44,7 +66,26 @@ export default defineComponent({
         zome_name: 'board',
         fn_name: 'create_board',
         payload: {
-          name: 'task board'
+          name: this.boardName
+        },
+        provenance: cell_id[1],
+      });
+    },
+    async createColumn() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      this.columnHash = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: 'board',
+        fn_name: 'create_column',
+        payload: {
+          column: {
+            title: this.columnTitle
+          },
+          board: this.boardHash
         },
         provenance: cell_id[1],
       });
