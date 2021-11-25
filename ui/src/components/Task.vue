@@ -42,6 +42,16 @@
       <span v-if="taskHash">Created a new task for column, hash {{ taskHash }}</span>
     </div>
 
+
+    <br />
+    <h2>The board information</h2>
+    <div>
+      <p>{{ this.boardName }}</p>
+
+      <br />
+      
+    </div>
+
   </div>
 </template>
 
@@ -126,6 +136,8 @@ export default defineComponent({
         },
         provenance: cell_id[1],
       });
+    },
+    async getBoard() {
     }
   },
 });
