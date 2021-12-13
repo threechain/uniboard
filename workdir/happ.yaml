@@ -11,7 +11,7 @@ slots:
     dna:
       bundled: "../dna/workdir/referral.dna"
       properties: ~
-      uuid: ~
+      uid: ~
       version: ~
       clone_limit: 0
 

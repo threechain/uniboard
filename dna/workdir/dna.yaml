@@ -1,11 +1,13 @@
 ---
 manifest_version: "1"
 name: referral
-uuid: 00000000-0000-0000-0000-000000000000
+uid: 00000000-0000-0000-0000-000000000000
 properties: ~
 zomes: 
   - name: career
     bundled: ../../target/wasm32-unknown-unknown/release/career.wasm
   - name: board
     bundled: ../../target/wasm32-unknown-unknown/release/board.wasm
+  - name: profile
+    bundled: ../../target/wasm32-unknown-unknown/release/profile.wasm
 

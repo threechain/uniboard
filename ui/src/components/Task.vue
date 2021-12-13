@@ -3,6 +3,21 @@
     <h1 class="text-lg italic">{{ msg }}</h1>
 
     <br />
+
+    <!-- profile info -->
+    <h2>User profile</h2>
+    <div>
+      <input v-model="handle" type='text' name="board" placeholder="create your profile" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
+      <br />
+      <button v-on:click="createProfile" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+        Create profile
+      </button>
+
+      <br />
+      <span v-if="profileHash">Created profile successfully, hash {{ profileHash }}</span>
+    </div>
+
+
     <!-- kanban board info -->
     <h2>Create Kanban Board</h2>
     <div>
@@ -71,6 +86,8 @@ export default defineComponent({
     msg: String,
   },
   data(): {
+    profileHash: String | undefined,
+    handle: String | undefined,
     boardHash: String | undefined,
     columnHash: String | undefined,
     taskHash: String | undefined,
@@ -80,6 +97,8 @@ export default defineComponent({
     boardInfo: String,
   } {
     return {
+      profileHash: undefined,
+      handle: undefined,
       boardHash: undefined,
       columnHash: undefined,
       taskHash: undefined,
@@ -90,6 +109,22 @@ export default defineComponent({
     };
   },
   methods: {
+    async createProfile() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      this.profileHash = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: "profile",
+        fn_name: "create_profile",
+        payload: {
+          handle: this.handle
+        },
+        provenance: cell_id[1],
+      });
+    },
     async createBoard() {
       const info = await appInfo();
       const cell_id = info.cell_data[0].cell_id;
