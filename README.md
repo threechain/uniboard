@@ -1,5 +1,7 @@
 
-# holochain-referral
+# Whiteboard
+
+A Kanban board build with Holochain.
 
 ## Environment Setup
 

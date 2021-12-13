@@ -2,6 +2,7 @@
 members = [
       "dna/zomes/career",
       "dna/zomes/board",
+      "dna/zomes/profile",
 ]
 
 [profile.dev]
