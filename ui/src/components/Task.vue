@@ -1,14 +1,14 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1 class="text-lg italic">{{ msg }}</h1>
 
     <br />
     <!-- kanban board info -->
     <h2>Create Kanban Board</h2>
     <div>
-      <input v-model="boardName" type='text' name="board" placeholder="input your board name" />
+      <input v-model="boardName" type='text' name="board" placeholder="input your board name" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
       <br />
-      <button v-on:click="createBoard">
+      <button v-on:click="createBoard" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
         Create a new board
       </button>
 
@@ -19,9 +19,9 @@
     <br />
     <h2>Create a new column for the board</h2>
     <div>
-      <input v-model="columnTitle" type='text' name="column" placeholder="input your column title" />
+      <input v-model="columnTitle" type='text' name="column" placeholder="input your column title" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
       <br />
-      <button v-on:click="createColumn">
+      <button v-on:click="createColumn" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
         Create a new column
       </button>
 
@@ -32,9 +32,9 @@
     <br />
     <h2>Create a new task for the column</h2>
     <div>
-      <input v-model="taskDescription" type='text' name="task" placeholder="input your task description" />
+      <input v-model="taskDescription" type='text' name="task" placeholder="input your task description" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
       <br />
-      <button v-on:click="createTask">
+      <button v-on:click="createTask" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
         Create a new task
       </button>
 
@@ -50,7 +50,7 @@
 
       <br />
       
-      <button v-on:click="getBoard">
+      <button v-on:click="getBoard" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
         Get the board
       </button>
 
