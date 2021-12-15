@@ -1,5 +1,4 @@
 use hdk::prelude::*;
-use holo_hash::{AgentPubKeyB64, EntryHashB64};
 
 pub const USERS_PATH: &str = "users";
 

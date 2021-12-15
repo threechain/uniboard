@@ -1,5 +1,4 @@
 use hdk::prelude::*;
-use hdk::prelude::holo_hash::*;
 
 #[hdk_entry(id = "board")]
 pub struct Board {
@@ -79,7 +78,6 @@ pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
 pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
     let board_entry_hash = EntryHash::from(input);
     let columns = get_links(board_entry_hash.clone(), Some(LinkTag::new("has_column")))?
-        .into_inner()
         .into_iter()
         .map(|link| {
             let element = get(link.target, GetOptions::default())?
@@ -91,7 +89,6 @@ pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
         .collect::<Result<Vec<Column>, WasmError>>()?;
     
     let tasks = get_links(board_entry_hash, Some(LinkTag::new("has_task")))?
-        .into_inner()
         .into_iter()
         .map(|link| {
             let task_element = get(link.target.clone(), GetOptions::default())?
@@ -99,7 +96,6 @@ pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
             let task_entry = task_element.entry().to_app_option::<Task>()?
                 .ok_or(WasmError::Guest(String::from("The targeted entry is not a task")))?;
             let column_entry_hash = get_links(link.target, Some(LinkTag::new("belongs_to_column")))?
-                .into_inner()
                 .first()
                 .ok_or(WasmError::Guest(String::from("The task is not belong to a column")))?
                 .target.clone();
