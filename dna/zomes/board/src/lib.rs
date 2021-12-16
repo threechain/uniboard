@@ -1,4 +1,5 @@
 use hdk::prelude::*;
+use hdk::prelude::holo_hash::*;
 
 #[hdk_entry(id = "board")]
 pub struct Board {

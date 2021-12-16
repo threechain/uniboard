@@ -1,4 +1,5 @@
 use hdk::prelude::*;
+use hdk::prelude::holo_hash::*;
 
 pub const USERS_PATH: &str = "users";
 

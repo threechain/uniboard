@@ -2,7 +2,7 @@
 manifest_version: "1"
 name: holochain-referral
 description: ~
-slots:
+roles:
 
   - id: referral
     provisioning:
