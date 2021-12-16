@@ -38,8 +38,7 @@ pub struct CreateTaskInput {
 
 #[derive(Serialize, Deserialize, SerializedBytes, Debug)]
 pub struct GetBoardOutput {
-    columns: Vec<Column>,
-    tasks: Vec<(Task, Column)>,
+    tasks: Vec<(Column, Vec<Task>)>,
 }
 
 #[hdk_extern]
@@ -65,12 +64,12 @@ pub fn create_column(input: CreateColumnInput) -> ExternResult<EntryHashB64> {
 // TODO content should be unique for each new item
 #[hdk_extern]
 pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
-    let CreateTaskInput { task, board, column } = input;
+    let CreateTaskInput { task, board: _, column } = input;
     create_entry(&task)?;
     let task_entry_hash = hash_entry(&task)?;
 
-    create_link(EntryHash::from(board), task_entry_hash.clone(), LinkTag::new("has_task"))?;
-    create_link(task_entry_hash.clone(), EntryHash::from(column), LinkTag::new("belongs_to_column"))?;
+    create_link(EntryHash::from(column), task_entry_hash.clone(), LinkTag::new("has_task"))?;
+    // create_link(task_entry_hash.clone(), EntryHash::from(column), LinkTag::new("belongs_to_column"))?;
 
     Ok(EntryHashB64::from(task_entry_hash))
 }
@@ -89,27 +88,26 @@ pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
         })
         .collect::<Result<Vec<Column>, WasmError>>()?;
     
-    let tasks = get_links(board_entry_hash, Some(LinkTag::new("has_task")))?
-        .into_iter()
-        .map(|link| {
-            let task_element = get(link.target.clone(), GetOptions::default())?
-                .ok_or(WasmError::Guest(String::from("Entry not found")))?;
-            let task_entry = task_element.entry().to_app_option::<Task>()?
-                .ok_or(WasmError::Guest(String::from("The targeted entry is not a task")))?;
-            let column_entry_hash = get_links(link.target, Some(LinkTag::new("belongs_to_column")))?
-                .first()
-                .ok_or(WasmError::Guest(String::from("The task is not belong to a column")))?
-                .target.clone();
-            let column_element = get(column_entry_hash, GetOptions::default())?
-                .ok_or(WasmError::Guest(String::from("Entry not found")))?;
-            let column_entry = column_element.entry().to_app_option::<Column>()?
-                .ok_or(WasmError::Guest(String::from("The targeted entry is not a column")))?;
-            Ok((task_entry, column_entry))
+    let tasks = columns.into_iter()
+        .map(|col| {
+            let col_entry_hash = hash_entry(&col)?;
+            let tasks = get_links(col_entry_hash, Some(LinkTag::new("has_task")))?
+                .into_iter()
+                .map(|link| {
+                    let element = get(link.target, GetOptions::default())?
+                        .ok_or(WasmError::Guest(String::from("Entry not found")))?;
+                    let entry = element.entry().to_app_option::<Task>()?
+                        .ok_or(WasmError::Guest(String::from("The targeted entry is not a task")))?;
+                    Ok(entry)
+                })
+                .collect::<Result<Vec<Task>, WasmError>>()?;
+            
+            Ok((col, tasks))
         })
-        .collect::<Result<Vec<(Task, Column)>, WasmError>>()?;
+        .collect::<Result<Vec<(Column, Vec<Task>)>, WasmError>>()?;
+    
 
     Ok(GetBoardOutput {
-        columns: columns,
-        tasks: tasks,
+        tasks,
     })
 }
