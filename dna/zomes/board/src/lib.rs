@@ -14,6 +14,7 @@ pub struct Column {
 
 #[hdk_entry(id = "task")]
 pub struct Task {
+    id: u8,
     description: String,
 }
 
@@ -34,11 +35,6 @@ pub struct CreateTaskInput {
     task: Task,
     board: EntryHashB64,
     column: EntryHashB64,
-}
-
-#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
-pub struct GetBoardOutput {
-    tasks: Vec<(Column, Vec<Task>)>,
 }
 
 #[hdk_extern]
@@ -74,8 +70,14 @@ pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
     Ok(EntryHashB64::from(task_entry_hash))
 }
 
+#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
+pub struct GetBoardColumnOutput {
+    title: String,
+    tasks: Vec<Task>,
+}
+
 #[hdk_extern]
-pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
+pub fn get_board(input: EntryHashB64) -> ExternResult<Vec<GetBoardColumnOutput>> {
     let board_entry_hash = EntryHash::from(input);
     let columns = get_links(board_entry_hash.clone(), Some(LinkTag::new("has_column")))?
         .into_iter()
@@ -102,12 +104,10 @@ pub fn get_board(input: EntryHashB64) -> ExternResult<GetBoardOutput> {
                 })
                 .collect::<Result<Vec<Task>, WasmError>>()?;
             
-            Ok((col, tasks))
+            Ok(GetBoardColumnOutput { title: col.title, tasks: tasks })
         })
-        .collect::<Result<Vec<(Column, Vec<Task>)>, WasmError>>()?;
+        .collect::<Result<Vec<GetBoardColumnOutput>, WasmError>>()?;
     
 
-    Ok(GetBoardOutput {
-        tasks,
-    })
+    Ok(tasks)
 }

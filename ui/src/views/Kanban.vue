@@ -49,6 +49,7 @@
     <h2>Create a new task for the column</h2>
     <div>
       <input v-model="taskDescription" type='text' name="task" placeholder="input your task description" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
+      <input v-model="taskID" type='number' name="task" placeholder="input your task id" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
       <br />
       <button v-on:click="createTask" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
         Create a new task
@@ -210,6 +211,7 @@ export default defineComponent({
       boardName: "", // TODO check empty
       columnTitle: "",
       taskDescription: "",
+      taskID: 0,
     }
   },
   methods: {
@@ -276,6 +278,7 @@ export default defineComponent({
         fn_name: 'create_task',
         payload: {
           task: {
+            id: this.taskID,
             description: this.taskDescription
           },
           board: this.boardHash,
@@ -297,7 +300,10 @@ export default defineComponent({
         payload: this.boardHash,
         provenance: cell_id[1],
       });
-      this.boardInfo = board.tasks;
+      console.log("mytasks:", board);
+      console.log("mytasks json:", JSON.stringify(board));
+
+      this.boardInfo = board;
     }
   },
 });
