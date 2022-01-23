@@ -296,7 +296,7 @@ export default defineComponent({
         cap: null,
         cell_id: cell_id,
         zome_name: 'board',
-        fn_name: 'get_board',
+        fn_name: 'get_board_by_hash',
         payload: this.boardHash,
         provenance: cell_id[1],
       });
