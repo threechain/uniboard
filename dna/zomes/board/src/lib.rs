@@ -1,41 +1,17 @@
 use hdk::prelude::*;
 use hdk::prelude::holo_hash::*;
 
-#[hdk_entry(id = "board")]
-pub struct Board {
-    name: String,
-    // description: Option<String>,
-}
+mod entries;
+mod params;
 
-#[hdk_entry(id = "column")]
-pub struct Column {
-    title: String,
-}
-
-#[hdk_entry(id = "task")]
-pub struct Task {
-    id: u8,
-    description: String,
-}
+use entries::*;
+use params::*;
 
 entry_defs![
     Board::entry_def(),
     Column::entry_def(),
     Task::entry_def()
 ];
-
-#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
-pub struct CreateColumnInput {
-    column: Column,
-    board: EntryHashB64,
-}
-
-#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
-pub struct CreateTaskInput {
-    task: Task,
-    board: EntryHashB64,
-    column: EntryHashB64,
-}
 
 #[hdk_extern]
 pub fn create_board(board: Board) -> ExternResult<EntryHashB64> {
@@ -68,12 +44,6 @@ pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
     // create_link(task_entry_hash.clone(), EntryHash::from(column), LinkTag::new("belongs_to_column"))?;
 
     Ok(EntryHashB64::from(task_entry_hash))
-}
-
-#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
-pub struct GetBoardColumnOutput {
-    title: String,
-    tasks: Vec<Task>,
 }
 
 #[hdk_extern]
