@@ -59,12 +59,21 @@
       <span v-if="taskHash">Created a new task for column, hash {{ taskHash }}</span>
     </div>
 
+    <br />
+    <h2>Delete a task for the column</h2>
+    <div>
+      <button v-on:click="deleteTask" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+        Delete the last task
+      </button>
+    </div>
 
     <br />
     <h2>The board information</h2>
     <div>
       <p>{{ this.boardName }}</p>
 
+      <input v-model="boardNameForGet" type='text' placeholder="input your board name" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
+      <br />
       <br />
       
       <button v-on:click="getBoard" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
@@ -209,6 +218,7 @@ export default defineComponent({
       columnHash: undefined,
       taskHash: undefined,
       boardName: "", // TODO check empty
+      boardNameForGet: "", // TODO check empty
       columnTitle: "",
       taskDescription: "",
       taskID: 0,
@@ -287,6 +297,24 @@ export default defineComponent({
         provenance: cell_id[1],
       });
     },
+    async deleteTask() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      const result = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: 'board',
+        fn_name: 'delete_task',
+        payload: {
+          task: this.taskHash,
+          column: this.columnHash,
+        },
+        provenance: cell_id[1],
+      });
+      console.log(result);
+    },
     async getBoard() {
       const info = await appInfo();
       const cell_id = info.cell_data[0].cell_id;
@@ -296,8 +324,8 @@ export default defineComponent({
         cap: null,
         cell_id: cell_id,
         zome_name: 'board',
-        fn_name: 'get_board_by_hash',
-        payload: this.boardHash,
+        fn_name: 'get_board_by_name',
+        payload: this.boardNameForGet,
         provenance: cell_id[1],
       });
       console.log("mytasks:", board);

@@ -16,6 +16,12 @@ pub struct CreateTaskInput {
 }
 
 #[derive(Serialize, Deserialize, SerializedBytes, Debug)]
+pub struct DeleteTaskInput {
+    pub task: EntryHashB64,
+    pub column: EntryHashB64,
+}
+
+#[derive(Serialize, Deserialize, SerializedBytes, Debug)]
 pub struct GetBoardColumnOutput {
     pub title: String,
     pub tasks: Vec<Task>,

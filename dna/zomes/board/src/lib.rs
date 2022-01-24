@@ -41,7 +41,7 @@ pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
         board: _,
         column,
     } = input;
-    create_entry(&task)?;
+    let _ = create_entry(&task)?;
     let task_entry_hash = hash_entry(&task)?;
 
     create_link(
@@ -49,9 +49,27 @@ pub fn create_task(input: CreateTaskInput) -> ExternResult<EntryHashB64> {
         task_entry_hash.clone(),
         LinkTag::new("has_task"),
     )?;
-    // create_link(task_entry_hash.clone(), EntryHash::from(column), LinkTag::new("belongs_to_column"))?;
+    // create_link(task_entry_hash.clone(), EntryHash::from(column), LinkTag::new("belongs_to_column"))?; // TODO if need this
 
     Ok(EntryHashB64::from(task_entry_hash))
+}
+
+#[hdk_extern]
+pub fn delete_task(input: DeleteTaskInput) -> ExternResult<HeaderHashB64> {
+    let task_entry_hash = EntryHash::from(input.task);
+    let task_element = get(task_entry_hash.clone(), GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Entry not found")))?;
+    let task_delete_header_hash = delete_entry(task_element.header_address().clone())?;
+
+    let column_entry_hash = EntryHash::from(input.column);
+    let links = get_links(column_entry_hash, Some(LinkTag::new("has_task")))?;
+    for link in links {
+        if link.target == task_entry_hash {
+            delete_link(link.create_link_hash)?;
+        }
+    }
+    
+    Ok(HeaderHashB64::from(task_delete_header_hash))
 }
 
 #[hdk_extern]
