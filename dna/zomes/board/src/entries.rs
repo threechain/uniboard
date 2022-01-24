@@ -12,6 +12,7 @@ pub struct Column {
 }
 
 #[hdk_entry(id = "task")]
+#[derive(Clone)]
 pub struct Task {
     pub id: u8,
     pub description: String,

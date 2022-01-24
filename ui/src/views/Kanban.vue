@@ -68,6 +68,17 @@
     </div>
 
     <br />
+    <h2>Update a task for the column</h2>
+    <div>
+      <input v-model="newTaskDescription" type='text' placeholder="input your task description" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
+      <input v-model="newTaskID" type='number' placeholder="input your task id" class="bg-green-50 border border-green-500 text-green-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 w-500 p-2.5 dark:bg-green-100 dark:border-green-400" />
+      <br />
+      <button v-on:click="updateTask" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+        Update a task
+      </button>
+    </div>
+
+    <br />
     <h2>The board information</h2>
     <div>
       <p>{{ this.boardName }}</p>
@@ -222,6 +233,8 @@ export default defineComponent({
       columnTitle: "",
       taskDescription: "",
       taskID: 0,
+      newTaskID: 0,
+      newTaskDescription: "",
     }
   },
   methods: {
@@ -310,6 +323,28 @@ export default defineComponent({
         payload: {
           task: this.taskHash,
           column: this.columnHash,
+        },
+        provenance: cell_id[1],
+      });
+      console.log(result);
+    },
+    async updateTask() {
+      const info = await appInfo();
+      const cell_id = info.cell_data[0].cell_id;
+
+      const appWs = await appWebsocket();
+      const result = await appWs.callZome({
+        cap: null,
+        cell_id: cell_id,
+        zome_name: 'board',
+        fn_name: 'update_task',
+        payload: {
+          task: this.taskHash,
+          column: this.columnHash,
+          new_task: {
+            id: this.newTaskID,
+            description: this.newTaskDescription
+          },
         },
         provenance: cell_id[1],
       });

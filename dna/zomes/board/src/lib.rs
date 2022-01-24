@@ -73,6 +73,33 @@ pub fn delete_task(input: DeleteTaskInput) -> ExternResult<HeaderHashB64> {
 }
 
 #[hdk_extern]
+pub fn update_task(input: UpdateTaskInput) -> ExternResult<HeaderHashB64> {
+    let task_entry_hash = EntryHash::from(input.task);
+    let task_element = get(task_entry_hash.clone(), GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Entry not found")))?;
+    
+    let update_task_header_hash = update_entry(task_element.header_address().clone(), input.new_task.clone())?;
+
+    let column_entry_hash = EntryHash::from(input.column);
+    let links = get_links(column_entry_hash.clone(), Some(LinkTag::new("has_task")))?;
+    for link in links {
+        if link.target == task_entry_hash {
+            delete_link(link.create_link_hash)?;
+        }
+    }
+
+    let new_task_entry_hash = hash_entry(input.new_task)?;
+
+    create_link(
+        column_entry_hash,
+        new_task_entry_hash.clone(),
+        LinkTag::new("has_task"),
+    )?;
+
+    Ok(HeaderHashB64::from(update_task_header_hash))
+}
+
+#[hdk_extern]
 pub fn get_board_by_name(input: String) -> ExternResult<Vec<GetBoardColumnOutput>> {
     let board = Board { name: input };
     let board_entry_hash = hash_entry(board)?;
