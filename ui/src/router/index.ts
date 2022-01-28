@@ -1,14 +1,8 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
-import Board from '../views/Board.vue'
+import Mock from '../views/Mock.vue'
 import Kanban from '../views/Kanban.vue'
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
   {
     path: '/about',
     name: 'About',
@@ -18,9 +12,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/board',
-    name: "Boared",
-    component: Board
+    path: '/mock',
+    name: 'Mock',
+    component: Mock,
   },
   {
     path: '/kanban',

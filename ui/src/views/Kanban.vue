@@ -122,7 +122,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Task from '@/components/Task.vue'; // @ is an alias to /src
 import draggable from "vuedraggable";
 import TaskCard from "@/components/TaskCard.vue";
 import { appInfo, appWebsocket } from '../store/holochain';
@@ -130,7 +129,6 @@ import { appInfo, appWebsocket } from '../store/holochain';
 export default defineComponent({
   name: 'Kanban',
   components: {
-    Task,
     TaskCard,
     draggable
   },

@@ -30,7 +30,7 @@ import { defineComponent } from 'vue';
 import draggable from "vuedraggable";
 import TaskCard from "@/components/TaskCard.vue";
 export default defineComponent({
-  name: "Board",
+  name: "Mock",
   components: {
     TaskCard,
     draggable
